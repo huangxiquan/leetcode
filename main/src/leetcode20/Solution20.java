@@ -6,7 +6,7 @@ import java.util.Stack;
  * Created by huangxiquan on 2020/5/10.
  * 20.有效的括号https://leetcode-cn.com/problems/valid-parentheses/
  */
-public class Solution {
+public class Solution20 {
 
     public boolean isValid(String s) {
         Stack<Character> stack = new Stack();
@@ -36,10 +36,10 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        System.out.println(new Solution().isValid("]"));
-        System.out.println(new Solution().isValid("()[]{}"));
-        System.out.println(new Solution().isValid("(]"));
-        System.out.println(new Solution().isValid("([)]"));
-        System.out.println(new Solution().isValid("{[]}"));
+        System.out.println(new Solution20().isValid("]"));
+        System.out.println(new Solution20().isValid("()[]{}"));
+        System.out.println(new Solution20().isValid("(]"));
+        System.out.println(new Solution20().isValid("([)]"));
+        System.out.println(new Solution20().isValid("{[]}"));
     }
 }

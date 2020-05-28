@@ -3,9 +3,7 @@ package bst;
 import com.oracle.tools.packager.Log;
 import com.sun.istack.internal.NotNull;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by huangxiquan on 2020/5/13.
@@ -18,12 +16,14 @@ public class BST<E extends Comparable<E>> {
         public Node right;
         public int depth;
         public int count;
+        public int height;
         public Node(E e) {
             this.e = e;
         }
         public Node(E e,int depth) {
             this.e = e;
             this.depth = depth;
+            this.height = 1;
         }
     }
 
@@ -54,8 +54,53 @@ public class BST<E extends Comparable<E>> {
             node.count += 1;
         }
         size ++;
+
+        node.height = Math.max(getHeight(node.left),getHeight(node.right)) + 1;
+
+        //维护平衡
+        //RR
+        int balanceFactor = getBalanceFactor(node);
+        if(Math.abs(balanceFactor) > 1 && getBalanceFactor(node.right) < 0) {
+            node = leftRotate(node);
+        }
+        //LL
+        if(Math.abs(balanceFactor) > 1 && getBalanceFactor(node.left) > 0) {
+            node = rightRotate(node);
+        }
+        //RL
+        if(Math.abs(balanceFactor) > 1 && getBalanceFactor(node.right) > 0) {
+            node.right = rightRotate(node.right);
+            node = leftRotate(node);
+        }
+        //LR
+        if(Math.abs(balanceFactor) > 1 && getBalanceFactor(node.left) < 0) {
+            node.left = leftRotate(node.left);
+            node = rightRotate(node);
+        }
         return node;
     }
+    //右旋转
+    private Node rightRotate(Node node) {
+        Node root = node.left;
+        Node temp = root.right;
+        root.right = node;
+        node.left = temp;
+        node.height = Math.max(getHeight(node.left),getHeight(node.right)) + 1;
+        root.height = Math.max(getHeight(root.left),getHeight(root.right)) + 1;
+        return root;
+    }
+    //左旋转
+    private Node leftRotate(Node node) {
+        Node root = node.right;
+        Node temp = root.left;
+        root.left = node;
+        node.right = temp;
+        //维护高度
+        node.height = Math.max(getHeight(node.left),getHeight(node.right)) + 1;
+        root.height = Math.max(getHeight(root.left),getHeight(root.right)) + 1;
+        return root;
+    }
+
     //中序遍历
     public void middleOrder() {
         middleOrder(root);
@@ -163,7 +208,7 @@ public class BST<E extends Comparable<E>> {
     }
 
     public static void main(String[] args) {
-        int[] nums = new int[]{28,16,13,22,30,29,42,14};
+        int[] nums = new int[]{3,1,2};
         BST<Integer> bst = new BST<>();
         for(int num : nums) {
             bst.add(num);
@@ -175,10 +220,57 @@ public class BST<E extends Comparable<E>> {
 //        System.out.println(bst);
 //        bst.removeMin();
         System.out.println(bst);
-        bst.remove(30);
-        System.out.println(bst);
-        bst.middleOrder();
+        bst.isBst();
+        System.out.println();
+        System.out.println("isBalance:" + bst.isBalance());
+//        bst.remove(30);
+//        System.out.println(bst);
+//        bst.middleOrder();
 
+    }
+
+    public void isBst() {
+        ArrayList<E> arrayList = new ArrayList<>();
+        isBst(root,arrayList);
+        System.out.print("isBst:" + arrayList);
+    }
+
+    public boolean isBalance() {
+        return isBalance(root);
+    }
+
+    private int getHeight(Node node) {
+        if(node == null) {
+            return 0;
+        }
+        return node.height;
+    }
+
+    private int getBalanceFactor(Node node) {
+        if(node == null) {
+            return 0;
+        }
+        return getHeight(node.left) - getHeight(node.right);
+    }
+
+    private boolean isBalance(Node node) {
+        if(node == null) {
+            return true;
+        }
+        if(Math.abs(getBalanceFactor(node)) >= 2) {
+            //不平衡
+            return false;
+        }
+        return isBalance(node.left) && isBalance(node.right);
+    }
+
+    private void isBst(Node node, ArrayList<E> arrayList) {
+        if(node == null) {
+            return;
+        }
+        isBst(node.left,arrayList);
+        arrayList.add(node.e);
+        isBst(node.right,arrayList);
     }
 
     @Override
@@ -186,14 +278,14 @@ public class BST<E extends Comparable<E>> {
         Queue<Node> nodes = new LinkedList<>();
         nodes.add(root);
         StringBuilder builder = new StringBuilder();
-        int currentDepth = 0;
+        int currentHeight = root.height;
         while (!nodes.isEmpty()) {
             Node node = nodes.remove();
-            if(node.depth != currentDepth) {
+            if(node.height != currentHeight) {
                 builder.append("\n");
-                currentDepth = node.depth;
+                currentHeight = node.height;
             }
-            for(int i = 0 ; i < node.count + node.depth ; i++) {
+            for(int i = 0 ; i < node.count + node.height ; i++) {
                 builder.append(" ");
             }
             builder.append(node.e);

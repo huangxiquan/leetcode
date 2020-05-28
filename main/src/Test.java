@@ -8,8 +8,10 @@ public class Test {
 //        bubbleSort(num);
 //        selectSort(num);w
 //        insertSort(num);
-        fastSort(num);
-        print(num);
+//        fastSort(num);
+//        print(num);
+        //        7 1 5 3 6 4
+
     }
 
     private static void fastSort(int[] num) {

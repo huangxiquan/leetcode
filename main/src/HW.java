@@ -5,7 +5,7 @@ import java.util.*;
  *
  *
  */
-public class Temp {
+public class HW {
 
     public static void main(String[] args) {
 //        test03();

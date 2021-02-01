@@ -1,17 +1,99 @@
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by huangxiquan on 2020/5/23.
  */
 public class Test {
     public static void main(String[] args) {
-        int[] num = new int[]{5,4,3,2,1};
+        int[] num = new int[]{14,12,15,13,11,16};
 //        int[] num = new int[]{2,3};
 //        bubbleSort(num);
-//        selectSort(num);w
+//        selectSort(num);
 //        insertSort(num);
 //        fastSort(num);
-//        print(num);
+        mergeSort(num);
+//        int result = getK(num,2);
+//        System.out.print(result);
         //        7 1 5 3 6 4
+    }
 
+    private static void mergeSort(int[] num) {
+        int[] result = new int[num.length];
+        mergeSort(num,result,0,num.length - 1);
+//        print(num);
+    }
+
+    private static void mergeSort(int[] num, int[] result, int start, int end) {
+        if(start >= end) {
+            return;
+        }
+        int middle = (start + end) / 2;
+        int start1 = start;
+        int end1 = middle;
+        int start2 = middle + 1;
+        int end2 = end;
+        mergeSort(num,result,start1,end1);
+        mergeSort(num,result,start2,end2);
+        System.out.println("start:" + start);
+        System.out.println("end:" + end);
+        int k = start;
+        while (start1 <= end1 && start2 <= end2) {
+            result[k] = num[start1] < num[start2] ? num[start1++] : num[start2++];
+            k++;
+        }
+        while (start1 <= end1) {
+            result[k] = num[start1];
+            start1 ++;
+            k++;
+        }
+        while (start2 <= end2) {
+            result[k] = num[start2];
+            start2 ++;
+            k++;
+        }
+        for(int i = start ; i <= end ; i++) {
+            num[i] = result[i];
+        }
+        print(num);
+    }
+
+    private static int getK(int[] num, int k) {
+        return getK(num,0,num.length - 1,k);
+    }
+
+    private static int getK(int[] num, int left, int right, int k) {
+        int base = num[left];
+        int start = left;
+        int end = right;
+        //头下标小于尾下标
+        while (start < end) {
+            //从尾往头，找到第一个小于base的值
+            while (end > start) {
+                if(num[end] < base) {
+                    break;
+                }
+                end --;
+            }
+            //从头到尾，找到第一个大于base的值
+            while (start < end) {
+                if(num[start] > base) {
+                    break;
+                }
+                start ++;
+            }
+            swap(num,start,end);
+        }
+        swap(num,left,start);
+        if(k - 1 == start) {
+            //直接返回
+            return num[start];
+        }else if(k - 1 < start) {
+            //从左边找
+            return getK(num,left,start - 1,k);
+        }else {
+            //从右边找
+            return getK(num,start + 1,right,k);
+        }
     }
 
     private static void fastSort(int[] num) {
@@ -72,7 +154,7 @@ public class Test {
 
     private static void selectSort(int[] num) {
         for(int i = 0 ; i < num.length ; i++) {
-            int minIndex = 0;
+            int minIndex = i;
             for(int j = i + 1; j < num.length ; j++) {
                 if(num[j] < num[minIndex]) {
                     minIndex = j;
@@ -86,7 +168,7 @@ public class Test {
 
     private static void print(int[] num) {
         for(int i = 0 ; i < num.length ; i ++) {
-            System.out.println(num[i]);
+            System.out.print(num[i] + " ");
         }
     }
 
